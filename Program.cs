@@ -44,6 +44,7 @@ namespace Projekt1
         static void ApplicationRun()
         {
             bool dzialanieProgramu = true;
+            ListaOsob = ToolboxClass.Deserializacja(ListaOsob);
             while (dzialanieProgramu)
             {
                 try

@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using System.Xml;
-using System.Xml.Serialization;
+using System.Text.Json;
 
 namespace Projekt1
 {
@@ -42,17 +41,13 @@ namespace Projekt1
             }
         }
 
-        static string plik = "dane.xml";
+        static readonly string plik = "dane.json";
         public static void Serializacja(List<Osoba> ListaOsob)
         {
             try
             {
-                XmlSerializer serializacja = new XmlSerializer(typeof(List<Osoba>));
-                using (TextWriter zapis = new StreamWriter(plik))
-                {
-                    serializacja.Serialize(zapis, ListaOsob);
-                    zapis.Close();
-                }
+                string json = JsonSerializer.Serialize(ListaOsob);
+                File.WriteAllText(plik, json);
             }
             catch (FileNotFoundException e)
             {
@@ -63,15 +58,14 @@ namespace Projekt1
                 Console.WriteLine(e.Message);
             }
         }
-        /*
-        public static Deserializacja(List<Osoba> ListaOsob)
+        
+        public static List<Osoba> Deserializacja(List<Osoba> lista)
         {
             try
             {
-                XmlSerializer deserializacja = new XmlSerializer(typeof(List<Osoba>));
-                FileStream odczyt = new FileStream(plik, FileMode.Open);
-                List<Osoba> os = (List<Osoba>)deserializacja.Deserialize(odczyt);
-                return os;
+                string jsonPlik = File.ReadAllText(plik);
+                lista = JsonSerializer.Deserialize<List<Osoba>>(jsonPlik);
+                return lista;
             }
             catch (FileNotFoundException e)
             {
@@ -81,7 +75,8 @@ namespace Projekt1
             {
                 Console.WriteLine(e.Message);
             }
+            return lista;
         }
-        */
+        
     }
 }
