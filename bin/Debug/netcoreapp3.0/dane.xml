@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfOsoba xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Osoba>
+    <Wiek>1</Wiek>
+    <Imie>Jan</Imie>
+    <Nazwisko>Q</Nazwisko>
+    <Plec>M</Plec>
+    <Adres>
+      <KodPocztowy>11-111</KodPocztowy>
+      <Miasto>Q</Miasto>
+      <Ulica>Q</Ulica>
+      <NrDomu>1</NrDomu>
+      <NrMieszkania>1</NrMieszkania>
+    </Adres>
+  </Osoba>
+</ArrayOfOsoba>
