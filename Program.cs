@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Linq;
 
 namespace Projekt1
 {
@@ -41,6 +43,21 @@ namespace Projekt1
             });
             ToolboxClass.Serializacja(ListaOsob);
         }
+        
+        private static void WyswietlUzytkownika(string wzor)
+        {
+            if (wzor == "*")
+            {
+                foreach (var osoba in ListaOsob)
+                    Console.WriteLine(osoba);
+            }
+            else
+            {
+                var polaKlasy = typeof(Osoba).GetProperties().Select(pole => pole.Name).ToList();
+                //foreach (var pole in polaKlasy)
+                //    Console.WriteLine(pole);
+            }
+        }
         static void ApplicationRun()
         {
             bool dzialanieProgramu = true;
@@ -64,18 +81,15 @@ namespace Projekt1
                             Console.Clear();
                             break;
                         case "4":
-                            //var wynik = ListaOsob.Find(item => item.Imie == "Jan");
-                            //Console.WriteLine(wynik);
+                            Console.Write("Podaj wzor wyszukiwania (znak * wyswietla wszystkie osoby): ");
+                            string wzor = Console.ReadLine();
+                            WyswietlUzytkownika(wzor);
                             Console.Clear();
                             break;
                         case "q":
                             dzialanieProgramu = false;
                             break;
                     }
-                    /*
-                    foreach (var _oOsoba in ListaOsob)
-                        Console.WriteLine(_oOsoba);
-                    */
                 }
                 catch (Exception e)
                 {
