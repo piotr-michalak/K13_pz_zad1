@@ -9,18 +9,6 @@ namespace Projekt1
     {
         public static List<Osoba> ListaOsob = new List<Osoba>();
 
-        static Adres PrzypiszAdres(Adres adres)
-        {
-            adres = new Adres
-            {
-                KodPocztowy = ToolboxClass.WprowadzTekst("Podaj kod pocztowy (format xx-xxx):", false),
-                Miasto = ToolboxClass.WprowadzTekst("Podaj miasto:", false),
-                Ulica = ToolboxClass.WprowadzTekst("Podaj ulice:", false),
-                NrDomu = ToolboxClass.WprowadzLiczbeZZakresu(0, 150),
-                NrMieszkania = ToolboxClass.WprowadzLiczbeZZakresu(0, 150)
-            };
-            return adres;
-        }
         private static void Opcje()
         {
             Console.WriteLine("Wybierz jedna z opcji:");
@@ -28,68 +16,262 @@ namespace Projekt1
             Console.WriteLine("2 - Edytuj uzytkownika");
             Console.WriteLine("3 - Usun uzytkownika");
             Console.WriteLine("4 - Wyswietl danego uzytkownika");
-            Console.WriteLine("q - Zakoncz dzialanie programu");
+            Console.WriteLine("0 - Zakoncz dzialanie programu");
+        }
+        private static void OpcjeWyszukiwania()
+        {
+            Console.WriteLine("1 - Imie");
+            Console.WriteLine("2 - Nazwisko");
+            Console.WriteLine("3 - Plec (K/M)");
+            Console.WriteLine("4 - Kod pocztowy (xx-xxx)");
+            Console.WriteLine("5 - Miasto");
+            Console.WriteLine("6 - Ulica");
+            Console.WriteLine("7 - Nr domu");
+            Console.WriteLine("8 - Nr mieszkania");
         }
         private static void StworzUzytkownika()
         {
-            Adres adres = new Adres();
             ListaOsob.Add(new Osoba
             {
                 Wiek = ToolboxClass.WprowadzLiczbeZZakresu(0, 150),
                 Imie = ToolboxClass.WprowadzTekst("Podaj imie:", false),
                 Nazwisko = ToolboxClass.WprowadzTekst("Podaj nazwisko:", false),
                 Plec = ToolboxClass.WprowadzTekst("Podaj plec (K/M):", false),
-                Adres = PrzypiszAdres(adres)
+                Adres = new Adres(ToolboxClass.WprowadzTekst("Podaj kod pocztowy (format xx-xxx):", false),
+                ToolboxClass.WprowadzTekst("Podaj miasto:", false),
+                ToolboxClass.WprowadzTekst("Podaj ulice:", false),
+                ToolboxClass.WprowadzLiczbeZZakresu(0, 150),
+                ToolboxClass.WprowadzLiczbeZZakresu(0, 150))
             });
             ToolboxClass.Serializacja(ListaOsob);
         }
-        
-        private static void WyswietlUzytkownika(string wzor)
+
+        private static List<Osoba> WyszukajUzytkownika(string wzor, int wybor)
         {
-            if (wzor == "*")
+            List<Osoba> wynikiWyszukiwania = new List<Osoba>();
+            if (wzor == "0")
             {
                 foreach (var osoba in ListaOsob)
-                    Console.WriteLine(osoba);
+                    wynikiWyszukiwania.Add(osoba);
             }
             else
             {
-                var polaKlasy = typeof(Osoba).GetProperties().Select(pole => pole.Name).ToList();
-                //foreach (var pole in polaKlasy)
-                //    Console.WriteLine(pole);
+                switch (wybor)
+                {
+                    case 1:
+                        foreach (var osoba in ListaOsob)
+                        {
+                            wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Imie.Contains(wzor));
+                        }
+                        break;
+                    case 2:
+                        foreach (var osoba in ListaOsob)
+                        {
+                            wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Nazwisko.Contains(wzor));
+                        }
+                        break;
+                    case 3:
+                        foreach (var osoba in ListaOsob)
+                        {
+                            wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Plec.Contains(wzor));
+                        }
+                        break;
+                    case 4:
+                        foreach (var osoba in ListaOsob)
+                        {
+                            wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Adres.KodPocztowy.Contains(wzor));
+                        }
+                        break;
+                    case 5:
+                        foreach (var osoba in ListaOsob)
+                        {
+                            wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Adres.Miasto.Contains(wzor));
+                        }
+                        break;
+                    case 6:
+                        foreach (var osoba in ListaOsob)
+                        {
+                            wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Adres.Ulica.Contains(wzor));
+                        }
+                        break;
+                    case 7:
+                        foreach (var osoba in ListaOsob)
+                        {
+                            wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Adres.NrDomu.Equals(wzor));
+                        }
+                        break;
+                    case 8:
+                        foreach (var osoba in ListaOsob)
+                        {
+                            wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Adres.NrMieszkania.Equals(wzor));
+                        }
+                        break;
+                }
             }
+            foreach (var osoba in wynikiWyszukiwania)
+                Console.WriteLine(osoba);
+            return wynikiWyszukiwania;
         }
         static void ApplicationRun()
         {
             bool dzialanieProgramu = true;
             ListaOsob = ToolboxClass.Deserializacja(ListaOsob);
+            List<Osoba> wynikiWyszukiwania = new List<Osoba>();
             while (dzialanieProgramu)
             {
                 try
                 {
+                    int wybor = 0;
+                    int wyborRekordu = 0;
+                    int wyborWyszukiwania = 0;
+                    string wzor = "";
                     Opcje();
-                    string wybor = Console.ReadLine();
+                    int.TryParse(Console.ReadLine(), out wybor);
                     switch (wybor)
                     {
-                        case "1":
+                        case 1:
                             StworzUzytkownika();
                             Console.Clear();
                             break;
-                        case "2":
+                        case 2:
+                            OpcjeWyszukiwania();
+                            int.TryParse(Console.ReadLine(), out wyborWyszukiwania);
+
+                            Console.WriteLine("Podaj wzor wyszukiwania (* - wyswietl wszystkich uzytkownikow):");
+                            wzor = Console.ReadLine();
+
+                            Console.Clear();
+
+                            wynikiWyszukiwania = WyszukajUzytkownika(wzor, wyborWyszukiwania);
+                            Console.WriteLine("Znalezione rekordy:");
+
+                            for (int index = 0; index < wynikiWyszukiwania.Count(); index++)
+                            {
+                                Console.WriteLine($"{index + 1} - {wynikiWyszukiwania[index]}");
+                            }
+
+                            while (true)
+                            {
+                                Console.WriteLine("Ktory rekord chcesz edytowac?");
+                                int.TryParse(Console.ReadLine(), out wyborRekordu);
+                                if (wyborRekordu <= wynikiWyszukiwania.Count())
+                                {
+                                    OpcjeWyszukiwania();
+                                    Console.WriteLine("Ktore pole chcesz edytowac?");
+                                    int.TryParse(Console.ReadLine(), out wybor);
+                                    for (int index = 0; index < ListaOsob.Count(); index++)
+                                    {
+                                        if (ListaOsob[index].Equals(wynikiWyszukiwania[wyborRekordu - 1]))
+                                        {
+                                            switch (wybor)
+                                            {
+                                                case 1:
+                                                    ListaOsob[index].Imie = ToolboxClass.WprowadzTekst("Podaj imie:");
+                                                    break;
+                                                case 2:
+                                                    ListaOsob[index].Nazwisko = ToolboxClass.WprowadzTekst("Podaj nazwisko:");
+                                                    break;
+                                                case 3:
+                                                    ListaOsob[index].Wiek = ToolboxClass.WprowadzLiczbeZZakresu(0, 150);
+                                                    break;
+                                                case 4:
+                                                    ListaOsob[index].Plec = ToolboxClass.WprowadzTekst("Podaj plec (K/M):");
+                                                    break;
+                                                case 5:
+                                                    ListaOsob[index].Adres.KodPocztowy = ToolboxClass.WprowadzTekst("Podaj kod pocztowy (format xx-xxx):");
+                                                    break;
+                                                case 6:
+                                                    ListaOsob[index].Adres.Miasto = ToolboxClass.WprowadzTekst("Podaj miasto: ");
+                                                    break;
+                                                case 7:
+                                                    ListaOsob[index].Adres.NrDomu = ToolboxClass.WprowadzLiczbeZZakresu(0, 150);
+                                                    break;
+                                                case 8:
+                                                    ListaOsob[index].Adres.NrMieszkania = ToolboxClass.WprowadzLiczbeZZakresu(0, 150);
+                                                    break;
+                                                default:
+                                                    Console.WriteLine("Niepoprawny argument");
+                                                    Console.ReadKey();
+                                                    Console.Clear();
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                    break;
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Wybrano niepoprawny rekord");
+                                }
+                            }
+                            foreach (var osoba in ListaOsob)
+                                Console.WriteLine(osoba);
+                            Console.ReadKey();
                             Console.Clear();
                             break;
-                        case "3":
+                        case 3:
+                            OpcjeWyszukiwania();
+                            int.TryParse(Console.ReadLine(), out wyborWyszukiwania);
+
+                            Console.WriteLine("Podaj wzor wyszukiwania (* - wyswietl wszystkich uzytkownikow):");
+                            wzor = Console.ReadLine();
+
+                            Console.Clear();
+
+                            wynikiWyszukiwania = WyszukajUzytkownika(wzor, wyborWyszukiwania);
+                            Console.WriteLine("Znalezione rekordy:");
+
+                            for (int index = 0; index < wynikiWyszukiwania.Count(); index++)
+                            {
+                                Console.WriteLine($"{index + 1} - {wynikiWyszukiwania[index]}");
+                            }
+
+                            while (true)
+                            {
+                                Console.WriteLine("Ktory rekord chcesz usunac?");
+                                int.TryParse(Console.ReadLine(), out wyborRekordu);
+                                if (wyborRekordu <= wynikiWyszukiwania.Count())
+                                {
+                                    for (int index = 0; index < ListaOsob.Count(); index++)
+                                    {
+                                        if (ListaOsob[index].Equals(wynikiWyszukiwania[wyborRekordu - 1]))
+                                        {
+                                            ListaOsob.RemoveAt(index);
+                                        }
+                                    }
+                                    break;
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Wybrano niepoprawny rekord");
+                                }
+                            }
+                            Console.ReadKey();
                             Console.Clear();
                             break;
-                        case "4":
-                            Console.Write("Podaj wzor wyszukiwania (znak * wyswietla wszystkie osoby): ");
-                            string wzor = Console.ReadLine();
-                            WyswietlUzytkownika(wzor);
+                        case 4:
+                            OpcjeWyszukiwania();
+                            Console.WriteLine("Wedlug ktorego pola chcesz wyszukac uzytkownika?");
+                            int.TryParse(Console.ReadLine(), out wyborWyszukiwania);
+
+                            Console.WriteLine("Podaj wzor wyszukiwania (* - wyswietl wszystkich uzytkownikow):");
+                            wzor = Console.ReadLine();
+
+                            WyszukajUzytkownika(wzor, wyborWyszukiwania);
+
+                            Console.ReadKey();
                             Console.Clear();
                             break;
-                        case "q":
+                        case 0:
                             dzialanieProgramu = false;
                             break;
+                        default:
+                            Console.WriteLine("Niepoprawny argument");
+                            Console.ReadKey();
+                            Console.Clear();
+                            break;
                     }
+                    ToolboxClass.Serializacja(ListaOsob);
                 }
                 catch (Exception e)
                 {

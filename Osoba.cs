@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Projekt1
-{   
+{
+    //zajęcia 28.02.2021
     [Serializable]
     public class Osoba : IAssert
     {
@@ -79,16 +80,24 @@ namespace Projekt1
             m_sImie = UNDEFINED_STRING;
             m_sNazwisko = UNDEFINED_STRING;
             m_sPlec = UNDEFINED_STRING;
+            _adres = Adres;
         }
-        public Osoba(int Wiek, string Imie, string Nazwisko, string Plec, Adres Adres) : this()
+        public Osoba(int Wiek, string Imie, string Nazwisko, string Plec, string KodPocztowy, string Miasto, string Ulica, int NrDomu, int NrMieszkania) : this()
         {
             this.Wiek = Wiek;
             this.Imie = Imie;
             this.Nazwisko = Nazwisko;
             this.Plec = Plec;
-            this.Adres = Adres;
+            this.Adres = new Adres(KodPocztowy, Miasto, Ulica, NrDomu, NrMieszkania);
         }
-
+        public Osoba(int Wiek, string Imie, string Nazwisko, string Plec, string KodPocztowy, string Miasto, string Ulica, int NrDomu) : this()
+        {
+            this.Wiek = Wiek;
+            this.Imie = Imie;
+            this.Nazwisko = Nazwisko;
+            this.Plec = Plec;
+            this.Adres = new Adres(KodPocztowy, Miasto, Ulica, NrDomu);
+        }
         public override string ToString()
         {
             return $"Imie:{Imie} Nazwisko:{Nazwisko} Plec:{Plec} Wiek:{Wiek} {Adres}";

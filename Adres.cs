@@ -81,7 +81,7 @@ namespace Projekt1
             m_sMiasto = UNDEFINED_STRING;
             m_sUlica = UNDEFINED_STRING;
             m_iNrDomu = -1;
-            m_iNrMieszkania = 0;
+            m_iNrMieszkania = -1;
         }
         public Adres(string KodPocztowy, string Miasto, string Ulica, int NrDomu, int NrMieszkania) : this()
         {
@@ -90,6 +90,13 @@ namespace Projekt1
             this.Ulica = Ulica;
             this.NrDomu = NrDomu;
             this.NrMieszkania = NrMieszkania;
+        }
+        public Adres(string KodPocztowy, string Miasto, string Ulica, int NrDomu) : this()
+        {
+            this.KodPocztowy = KodPocztowy;
+            this.Miasto = Miasto;
+            this.Ulica = Ulica;
+            this.NrDomu = NrDomu;
         }
 
         public override string ToString()

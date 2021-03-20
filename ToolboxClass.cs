@@ -8,6 +8,7 @@ namespace Projekt1
 {
     public class ToolboxClass
     {
+        //zajęcia 28.02.2021
         public static int WprowadzLiczbeZZakresu(int a_iMin, int a_iMax)
         {
             while (true)
@@ -24,6 +25,7 @@ namespace Projekt1
             }
         }
 
+        //zajęcia 28.02.2021
         public static string WprowadzTekst(string a_sText, bool a_bCanBeEmpty = true)
         {
             while (true)
