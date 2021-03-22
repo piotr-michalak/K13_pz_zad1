@@ -9,11 +9,11 @@ namespace Projekt1
     public class ToolboxClass
     {
         //zajęcia 28.02.2021
-        public static int WprowadzLiczbeZZakresu(int a_iMin, int a_iMax)
+        public static int WprowadzLiczbeZZakresu(int a_iMin, int a_iMax, string a_sText)
         {
             while (true)
             {
-                Console.Write($"Podaj wartosc z przedzialu {a_iMin}-{a_iMax}:");
+                Console.Write($"{a_sText} {a_iMin}-{a_iMax}:");
 
                 if (int.TryParse(Console.ReadLine(), out int _iValue) == true &&
                     _iValue >= a_iMin && _iValue <= a_iMax)
@@ -36,7 +36,7 @@ namespace Projekt1
 
                 if (string.IsNullOrEmpty(_sValue) && a_bCanBeEmpty == false)
                 {
-                    Console.WriteLine("Nie wpisano wartosci.");
+                    Console.WriteLine("Nie wpisano wartosci");
                 }
                 else
                     return _sValue;

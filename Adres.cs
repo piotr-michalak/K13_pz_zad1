@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace Projekt1
 {
@@ -20,9 +19,8 @@ namespace Projekt1
             get => m_sKodPocztowy;
             set
             {
-                string sWzorRegEx = @"^\d{2}-\d{3}";
-                if (!Regex.IsMatch(value, sWzorRegEx))
-                    throw new Exception("Niepoprawny format pola <KodPocztowy> lub bledne dane");
+                if (string.IsNullOrEmpty(value))
+                    throw new Exception("Pole <KodPocztowy> nie moze byc puste!");
 
                 m_sKodPocztowy = value;
             }
@@ -81,7 +79,7 @@ namespace Projekt1
             m_sMiasto = UNDEFINED_STRING;
             m_sUlica = UNDEFINED_STRING;
             m_iNrDomu = -1;
-            m_iNrMieszkania = -1;
+            m_iNrMieszkania = 0;
         }
         public Adres(string KodPocztowy, string Miasto, string Ulica, int NrDomu, int NrMieszkania) : this()
         {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Projekt1
 {
@@ -29,19 +30,30 @@ namespace Projekt1
             Console.WriteLine("7 - Nr domu");
             Console.WriteLine("8 - Nr mieszkania");
         }
+        public static string DodajKodPocztowy()
+        {
+            while (true)
+            {
+                string sWzorRegEx = @"^\d{2}-\d{3}";
+                string kodPocztowy = ToolboxClass.WprowadzTekst("Podaj kod pocztowy (format xx-xxx):", false);
+                if (Regex.IsMatch(kodPocztowy, sWzorRegEx))
+                    return kodPocztowy;
+                Console.WriteLine("Niepoprawny format pola <KodPocztowy> lub bledne dane");
+            }
+        }
         private static void StworzUzytkownika()
         {
             ListaOsob.Add(new Osoba
             {
-                Wiek = ToolboxClass.WprowadzLiczbeZZakresu(0, 150),
+                Wiek = ToolboxClass.WprowadzLiczbeZZakresu(0, 150, "Podaj wiek w przedziale"),
                 Imie = ToolboxClass.WprowadzTekst("Podaj imie:", false),
                 Nazwisko = ToolboxClass.WprowadzTekst("Podaj nazwisko:", false),
                 Plec = ToolboxClass.WprowadzTekst("Podaj plec (K/M):", false),
-                Adres = new Adres(ToolboxClass.WprowadzTekst("Podaj kod pocztowy (format xx-xxx):", false),
+                Adres = new Adres(DodajKodPocztowy(),
                 ToolboxClass.WprowadzTekst("Podaj miasto:", false),
                 ToolboxClass.WprowadzTekst("Podaj ulice:", false),
-                ToolboxClass.WprowadzLiczbeZZakresu(0, 150),
-                ToolboxClass.WprowadzLiczbeZZakresu(0, 150))
+                ToolboxClass.WprowadzLiczbeZZakresu(0, 150, "Podaj nr domu w przedziale"),
+                ToolboxClass.WprowadzLiczbeZZakresu(0, 150, "(Opcjonalne) Podaj nr mieszkania w przedziale"))
             });
             ToolboxClass.Serializacja(ListaOsob);
         }
@@ -49,7 +61,7 @@ namespace Projekt1
         private static List<Osoba> WyszukajUzytkownika(string wzor, int wybor)
         {
             List<Osoba> wynikiWyszukiwania = new List<Osoba>();
-            if (wzor == "0")
+            if (wzor == "*")
             {
                 foreach (var osoba in ListaOsob)
                     wynikiWyszukiwania.Add(osoba);
@@ -59,52 +71,28 @@ namespace Projekt1
                 switch (wybor)
                 {
                     case 1:
-                        foreach (var osoba in ListaOsob)
-                        {
-                            wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Imie.Contains(wzor));
-                        }
+                        wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Imie.Contains(wzor));
                         break;
                     case 2:
-                        foreach (var osoba in ListaOsob)
-                        {
-                            wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Nazwisko.Contains(wzor));
-                        }
+                        wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Nazwisko.Contains(wzor));
                         break;
                     case 3:
-                        foreach (var osoba in ListaOsob)
-                        {
-                            wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Plec.Contains(wzor));
-                        }
+                        wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Plec.Contains(wzor));
                         break;
                     case 4:
-                        foreach (var osoba in ListaOsob)
-                        {
-                            wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Adres.KodPocztowy.Contains(wzor));
-                        }
+                        wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Adres.KodPocztowy.Contains(wzor));
                         break;
                     case 5:
-                        foreach (var osoba in ListaOsob)
-                        {
-                            wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Adres.Miasto.Contains(wzor));
-                        }
+                        wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Adres.Miasto.Contains(wzor));
                         break;
                     case 6:
-                        foreach (var osoba in ListaOsob)
-                        {
-                            wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Adres.Ulica.Contains(wzor));
-                        }
+                        wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Adres.Ulica.Contains(wzor));
                         break;
                     case 7:
-                        foreach (var osoba in ListaOsob)
-                        {
-                            wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Adres.NrDomu.Equals(wzor));
-                        }
+                        wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Adres.NrDomu.Equals(wzor));
                         break;
                     case 8:
-                        foreach (var osoba in ListaOsob)
-                        {
-                            wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Adres.NrMieszkania.Equals(wzor));
-                        }
+                        wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Adres.NrMieszkania.Equals(wzor));
                         break;
                 }
             }
@@ -154,7 +142,7 @@ namespace Projekt1
                             {
                                 Console.WriteLine("Ktory rekord chcesz edytowac?");
                                 int.TryParse(Console.ReadLine(), out wyborRekordu);
-                                if (wyborRekordu <= wynikiWyszukiwania.Count())
+                                if (wyborRekordu <= wynikiWyszukiwania.Count() && wyborRekordu != 0)
                                 {
                                     OpcjeWyszukiwania();
                                     Console.WriteLine("Ktore pole chcesz edytowac?");
@@ -172,22 +160,22 @@ namespace Projekt1
                                                     ListaOsob[index].Nazwisko = ToolboxClass.WprowadzTekst("Podaj nazwisko:");
                                                     break;
                                                 case 3:
-                                                    ListaOsob[index].Wiek = ToolboxClass.WprowadzLiczbeZZakresu(0, 150);
+                                                    ListaOsob[index].Wiek = ToolboxClass.WprowadzLiczbeZZakresu(0, 150, "Podaj wiek w przedziale");
                                                     break;
                                                 case 4:
                                                     ListaOsob[index].Plec = ToolboxClass.WprowadzTekst("Podaj plec (K/M):");
                                                     break;
                                                 case 5:
-                                                    ListaOsob[index].Adres.KodPocztowy = ToolboxClass.WprowadzTekst("Podaj kod pocztowy (format xx-xxx):");
+                                                    ListaOsob[index].Adres.KodPocztowy = DodajKodPocztowy();
                                                     break;
                                                 case 6:
-                                                    ListaOsob[index].Adres.Miasto = ToolboxClass.WprowadzTekst("Podaj miasto: ");
+                                                    ListaOsob[index].Adres.Miasto = ToolboxClass.WprowadzTekst("Podaj miasto:");
                                                     break;
                                                 case 7:
-                                                    ListaOsob[index].Adres.NrDomu = ToolboxClass.WprowadzLiczbeZZakresu(0, 150);
+                                                    ListaOsob[index].Adres.NrDomu = ToolboxClass.WprowadzLiczbeZZakresu(0, 150, "Podaj nr domu w przedziale");
                                                     break;
                                                 case 8:
-                                                    ListaOsob[index].Adres.NrMieszkania = ToolboxClass.WprowadzLiczbeZZakresu(0, 150);
+                                                    ListaOsob[index].Adres.NrMieszkania = ToolboxClass.WprowadzLiczbeZZakresu(0, 150, "(Opcjonalne) Podaj nr mieszkania w przedziale");
                                                     break;
                                                 default:
                                                     Console.WriteLine("Niepoprawny argument");
