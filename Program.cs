@@ -23,12 +23,13 @@ namespace Projekt1
         {
             Console.WriteLine("1 - Imie");
             Console.WriteLine("2 - Nazwisko");
-            Console.WriteLine("3 - Plec (K/M)");
-            Console.WriteLine("4 - Kod pocztowy (xx-xxx)");
-            Console.WriteLine("5 - Miasto");
-            Console.WriteLine("6 - Ulica");
-            Console.WriteLine("7 - Nr domu");
-            Console.WriteLine("8 - Nr mieszkania");
+            Console.WriteLine("3 - Wiek");
+            Console.WriteLine("4 - Plec (K/M)");
+            Console.WriteLine("5 - Kod pocztowy (xx-xxx)");
+            Console.WriteLine("6 - Miasto");
+            Console.WriteLine("7 - Ulica");
+            Console.WriteLine("8 - Nr domu");
+            Console.WriteLine("9 - Nr mieszkania");
         }
         public static string DodajKodPocztowy()
         {
@@ -43,18 +44,57 @@ namespace Projekt1
         }
         private static void StworzUzytkownika()
         {
-            ListaOsob.Add(new Osoba
-            {
-                Wiek = ToolboxClass.WprowadzLiczbeZZakresu(0, 150, "Podaj wiek w przedziale"),
-                Imie = ToolboxClass.WprowadzTekst("Podaj imie:", false),
-                Nazwisko = ToolboxClass.WprowadzTekst("Podaj nazwisko:", false),
-                Plec = ToolboxClass.WprowadzTekst("Podaj plec (K/M):", false),
-                Adres = new Adres(DodajKodPocztowy(),
-                ToolboxClass.WprowadzTekst("Podaj miasto:", false),
-                ToolboxClass.WprowadzTekst("Podaj ulice:", false),
-                ToolboxClass.WprowadzLiczbeZZakresu(0, 150, "Podaj nr domu w przedziale"),
-                ToolboxClass.WprowadzLiczbeZZakresu(0, 150, "(Opcjonalne) Podaj nr mieszkania w przedziale"))
-            });
+            string imie = ToolboxClass.WprowadzTekst("Podaj imie:", false);
+            string nazwisko = ToolboxClass.WprowadzTekst("Podaj nazwisko:", false);
+            int wiek = ToolboxClass.WprowadzLiczbeZZakresu(0, 150, "Podaj wiek w przedziale");
+            string plec = ToolboxClass.WprowadzTekst("Podaj plec (K/M):", false);
+            string kodPocztowy = DodajKodPocztowy();
+            string miasto = ToolboxClass.WprowadzTekst("Podaj miasto:", false);
+            string ulica = ToolboxClass.WprowadzTekst("Podaj ulice:", false);
+            int nrDomu = ToolboxClass.WprowadzLiczbeZZakresu(0, 150, "Podaj nr domu w przedziale");
+            Console.WriteLine("Czy chcesz podac nr mieszkania? (T/N)");
+            string wybor = "";
+            while (true){
+                wybor = Console.ReadLine();
+                if (wybor.ToUpper() == "T")
+                {
+                    int nrMieszkania = ToolboxClass.WprowadzLiczbeZZakresu(0, 150, "(Opcjonalne) Podaj nr mieszkania w przedziale");
+                    ListaOsob.Add(new Osoba
+                    {
+                        Wiek = wiek,
+                        Imie = imie,
+                        Nazwisko = nazwisko,
+                        Plec = plec,
+                        Adres = new Adres(
+                        kodPocztowy,
+                        miasto,
+                        ulica,
+                        nrDomu,
+                        nrMieszkania
+                        )
+                    });
+                    break;
+                }
+                else if (wybor.ToUpper() == "N")
+                {
+                    ListaOsob.Add(new Osoba
+                    {
+                        Wiek = wiek,
+                        Imie = imie,
+                        Nazwisko = nazwisko,
+                        Plec = plec,
+                        Adres = new Adres(
+                        kodPocztowy,
+                        miasto,
+                        ulica,
+                        nrDomu
+                        )
+                    });
+                    break;
+                }
+                else 
+                    Console.WriteLine("Niepoprawna wartosc");
+            }
             ToolboxClass.Serializacja(ListaOsob);
         }
 
@@ -77,27 +117,28 @@ namespace Projekt1
                         wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Nazwisko.Contains(wzor));
                         break;
                     case 3:
-                        wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Plec.Contains(wzor));
+                        wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Wiek.Equals(wzor));
                         break;
                     case 4:
-                        wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Adres.KodPocztowy.Contains(wzor));
+                        wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Plec.Contains(wzor));
                         break;
                     case 5:
-                        wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Adres.Miasto.Contains(wzor));
+                        wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Adres.KodPocztowy.Contains(wzor));
                         break;
                     case 6:
-                        wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Adres.Ulica.Contains(wzor));
+                        wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Adres.Miasto.Contains(wzor));
                         break;
                     case 7:
-                        wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Adres.NrDomu.Equals(wzor));
+                        wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Adres.Ulica.Contains(wzor));
                         break;
                     case 8:
+                        wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Adres.NrDomu.Equals(wzor));
+                        break;
+                    case 9:
                         wynikiWyszukiwania = ListaOsob.FindAll(osoba => osoba.Adres.NrMieszkania.Equals(wzor));
                         break;
                 }
             }
-            foreach (var osoba in wynikiWyszukiwania)
-                Console.WriteLine(osoba);
             return wynikiWyszukiwania;
         }
         static void ApplicationRun()
@@ -245,7 +286,9 @@ namespace Projekt1
                             Console.WriteLine("Podaj wzor wyszukiwania (* - wyswietl wszystkich uzytkownikow):");
                             wzor = Console.ReadLine();
 
-                            WyszukajUzytkownika(wzor, wyborWyszukiwania);
+                            wynikiWyszukiwania = WyszukajUzytkownika(wzor, wyborWyszukiwania);
+                            foreach (var osoba in wynikiWyszukiwania)
+                                Console.WriteLine(osoba);
 
                             Console.ReadKey();
                             Console.Clear();
